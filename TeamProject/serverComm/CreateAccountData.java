@@ -1,14 +1,13 @@
 package serverComm;
 
-
 import java.io.Serializable;
 
-public class LoginData implements Serializable 
+public class CreateAccountData implements Serializable 
 {
   // Private data fields for the username and password.
   private String username;
   private String password;
-  
+  private String password2;
   // Getters for the username and password.
   public String getUsername()
   {
@@ -18,7 +17,10 @@ public class LoginData implements Serializable
   {
     return password;
   }
-  
+  public String getPassword2()
+  {
+    return password;
+  }
   // Setters for the username and password.
   public void setUsername(String username)
   {
@@ -29,10 +31,15 @@ public class LoginData implements Serializable
     this.password = password;
   }
   
+  public void setPassword2(String password2)
+  {
+    this.password2 = password2;
+  }
   // Constructor that initializes the username and password.
-  public LoginData(String username, String password)
+  public CreateAccountData(String username, String password, String password2)
   {
     setUsername(username);
     setPassword(password);
+    setPassword2(password2);
   }
 }

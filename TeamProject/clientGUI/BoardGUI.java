@@ -1,6 +1,11 @@
 package clientGUI;
 
-public class BoardGUI
+import javax.swing.JPanel;
+import clientComm.Game;
+public class BoardGUI extends JPanel
 {
-
+  public BoardGUI(Game game)
+  {
+    
+  }
 }
