@@ -19,7 +19,7 @@ public class CreateAccountData implements Serializable
   }
   public String getPassword2()
   {
-    return password;
+    return password2;
   }
   // Setters for the username and password.
   public void setUsername(String username)

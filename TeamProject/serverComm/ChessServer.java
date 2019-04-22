@@ -90,6 +90,11 @@ public class ChessServer extends AbstractServer{
           result = "LoginSuccessful";
           log.append("Client " + arg1.getId() + " successfully logged in as " + data.getUsername() + "\n");
         }
+        else if(data.getUsername().equalsIgnoreCase("admin") && data.getPassword().equals("admin"))
+        {
+          result = "LoginSuccessfulAdmin";
+          log.append("Client " + arg1.getId() + " successfully logged in as " + data.getUsername() + "\n");
+        }
         else
         {
           result = new Error("The username and password are incorrect.", "Login");
@@ -184,7 +189,7 @@ public class ChessServer extends AbstractServer{
 //      }
         if (arg0 instanceof LeaderboardData) {
           String comm = "select * from leaderboard";
-          r = database.query(comm);
+         // r = database.query(comm);
           
           try
           {
@@ -220,7 +225,7 @@ public class ChessServer extends AbstractServer{
         }
       } 
       }
-    }
+    
     // Method that handles listening exceptions by displaying exception information.
     public void listeningException(Throwable exception) 
     {

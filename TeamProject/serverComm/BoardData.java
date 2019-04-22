@@ -1,6 +1,9 @@
 package serverComm;
+import java.io.Serializable;
 
-public class BoardData
+public class BoardData implements Serializable
 {
-
+  private String boardPGN;
+  private boolean isWhiteTurn;
+  
 }

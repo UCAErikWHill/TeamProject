@@ -45,9 +45,11 @@ public class NewAccGUI extends JPanel
     // Create a panel for the buttons.
     JPanel buttonPanel = new JPanel();
     JButton createButton = new JButton("Create");
+    JButton backButton = new JButton("Back");
     createButton.addActionListener(newaccount);
+    backButton.addActionListener(newaccount);
     buttonPanel.add(createButton);
-
+    buttonPanel.add(backButton);
     // Arrange the three panels in a grid.
     JPanel grid = new JPanel(new GridLayout(3, 1, 0, 10));
     new GridLayout(3, 1, 0, 10);

@@ -62,16 +62,22 @@ public class MainClient extends AbstractClient
       String message = (String)arg0;
       
       // If we successfully logged in, tell the login controller.
-      if (message.equals("LoginSuccessful"))
+      if (message.equals("LoginSuccessful") || message.equals("LoginSuccessfulAdmin"))
       {
         login.loginSuccess();
+        if(message.equals("LoginSuccessfulAdmin"))
+        {
+          opt.setAdmin(true);  
+        }
+        else
+          opt.setAdmin(false);
       }
       
-      // If we successfully created an account, tell the create account controller.
+      // If we successfully created an account, tell the create acentcount controller.
       else if (message.equals("CreateAccountSuccessful"))
       {
         newaccount.createAccountSuccess();
-      }
+      } 
     }
     
     // If we received an Error, figure out where to display it.
