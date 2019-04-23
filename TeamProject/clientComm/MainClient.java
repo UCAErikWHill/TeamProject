@@ -52,7 +52,10 @@ public class MainClient extends AbstractClient
   {
     this.game = game;
   }
-
+  public String getLoggedUsername()
+  {
+    return login.getLoggedUsername();
+  }
   // Method that handles messages from the server.
   public void handleMessageFromServer(Object arg0)
   {

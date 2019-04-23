@@ -19,6 +19,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import clientComm.MainClient;
@@ -34,6 +35,7 @@ public class Game implements ActionListener
   private Position gamePos;
   private int currentPlay;
   private int player;// player can be 0 for 
+  private int fromSqi;
   // Constructor for the initial controller.
   public Game(JPanel container, MainClient client)
   {
@@ -42,6 +44,7 @@ public class Game implements ActionListener
     chessGame = new chesspresso.game.Game();
     currentPlay = chessGame.getCurrentPly();
     gamePos = chessGame.getPosition();
+    fromSqi = -1;
   }
   @Override
   public void actionPerformed(ActionEvent e)
@@ -49,7 +52,20 @@ public class Game implements ActionListener
     // TODO Auto-generated method stub
     if(currentPlay % 2 == player)
     {
-      
+      if(fromSqi == -1)
+        fromSqi = Chess.strToSqi(e.getActionCommand());
+      else
+      {
+        try
+        {
+          this.addMove(fromSqi, Chess.strToSqi(e.getActionCommand()));
+        } catch (IllegalMoveException e1)
+        {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        }
+        fromSqi = -1;
+      }
     }
   }
   public void start()
@@ -61,10 +77,22 @@ public class Game implements ActionListener
   {
     CardLayout cardLayout = (CardLayout)container.getLayout();
     cardLayout.show(container, "4");
-    if(gamePos.isMate())
+    if(gamePos.isMate() && currentPlay % 2 != player)
     {
-      ;
+      try
+      {
+        client.sendToServer((client.getLoggedUsername()));
+        JOptionPane.showMessageDialog(null, "You Won. Score Increased by 1");
+      } catch (IOException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
+    else if(gamePos.isMate() && currentPlay % 2 == player)
+      JOptionPane.showMessageDialog(null, "You Lost!");
+    else if(gamePos.isStaleMate())
+      JOptionPane.showMessageDialog(null, "Stalemate/Draw.");
   }
   
   public void setPlayer(int p)
@@ -137,6 +165,17 @@ public class Game implements ActionListener
             try
             {
               chessGame.getPosition().doMove(move);
+              currentPlay = chessGame.getCurrentPly();
+              gamePos = chessGame.getPosition();
+              BoardData dat = this.getGameBoardData();
+              try
+              {
+                client.sendToServer(dat);
+              } catch (IOException e)
+              {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+              }
             } catch (IllegalMoveException e)
             {
               // TODO Auto-generated catch block
@@ -149,6 +188,17 @@ public class Game implements ActionListener
           try
           {
             chessGame.getPosition().doMove(move);
+            currentPlay = chessGame.getCurrentPly();
+            gamePos = chessGame.getPosition();
+            BoardData dat = this.getGameBoardData();
+            try
+            {
+              client.sendToServer(dat);
+            } catch (IOException e)
+            {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
           } catch (IllegalMoveException e)
           {
             // TODO Auto-generated catch block
@@ -157,17 +207,7 @@ public class Game implements ActionListener
         }
       }
     }
-    currentPlay = chessGame.getCurrentPly();
-    gamePos = chessGame.getPosition();
-    BoardData dat = this.getGameBoardData();
-    try
-    {
-      client.sendToServer(dat);
-    } catch (IOException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+
     if(chessGame.getPosition().isMate() || chessGame.getPosition().isStaleMate())
       this.end();
   }

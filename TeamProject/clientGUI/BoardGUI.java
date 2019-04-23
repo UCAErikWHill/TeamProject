@@ -1,5 +1,7 @@
 package clientGUI;
 
+import java.awt.GridLayout;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -11,12 +13,20 @@ public class BoardGUI extends JPanel
   private JButton[] boardbuttons;
   public BoardGUI(Game game)
   {
+    JPanel screen = new JPanel(new GridLayout(8, 8, 0, 0));
     boardbuttons = new JButton[64];
     for(int i = 0; i<64; i++)
     {
       boardbuttons[i] = new JButton();
       boardbuttons[i].setActionCommand(Chess.sqiToStr(i));
     }
+    
+    for(int i = 63; i >= 0; i--)
+    {
+      screen.add(boardbuttons[i]);
+    }
+    this.add(screen);
+    
   }
   public void redrawBoard(Position p)
   {

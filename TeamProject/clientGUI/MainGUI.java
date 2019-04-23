@@ -10,7 +10,6 @@ import clientComm.*;
 public class MainGUI extends JFrame
 {
   
-  
   // Constructor that creates the client GUI.
   public MainGUI()
   {

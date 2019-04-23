@@ -189,9 +189,10 @@ public class ChessServer extends AbstractServer{
             this.sendToAllClients("gamestart");
           }
         }
-        else if(msg.equals("gamestart"))
+        else
         {
-          
+          int score = database.getScore(msg);
+          database.updateScores(msg,score);
         }
       }
     }

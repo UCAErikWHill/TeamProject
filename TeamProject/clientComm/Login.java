@@ -16,6 +16,7 @@ public class Login implements ActionListener
     // Private data field for storing the container.
     private JPanel container;
     private MainClient client;
+    private String username;
     // Constructor for the initial controller.
     public Login(JPanel container, MainClient client)
     {
@@ -53,8 +54,8 @@ public class Login implements ActionListener
     // After the login is successful, set the User object and display the contacts screen.
     public void loginSuccess()
     {
-      LoginGUI logingui = (LoginGUI)container.getComponent(1);
-      
+      LoginGUI logingui = (LoginGUI)container;
+      username = logingui.getUsername();
       CardLayout cardLayout = (CardLayout)container.getLayout();
       cardLayout.show(container, "4");
     }
@@ -65,4 +66,9 @@ public class Login implements ActionListener
       LoginGUI logingui = (LoginGUI)container.getComponent(1);
       logingui.setError(error);
     }
+    public String getLoggedUsername()
+    {
+      return username;
+    }
+
 }
