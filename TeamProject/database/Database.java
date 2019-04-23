@@ -17,7 +17,7 @@ public class Database
         FileInputStream fis = null;
  
         try {
-            fis = new FileInputStream("Database/db.properties");
+            fis = new FileInputStream("db.properties");
             prop.load(fis);
             String url = prop.getProperty("url");
             String user = prop.getProperty("username");

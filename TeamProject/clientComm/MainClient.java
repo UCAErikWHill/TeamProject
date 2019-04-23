@@ -3,6 +3,8 @@ import clientComm.*;
 import ocsf.client.AbstractClient;
 import serverComm.BoardData;
 import serverComm.Error;
+import serverComm.LeaderboardData;
+import serverComm.StatusData;
 
 public class MainClient extends AbstractClient
 {
@@ -120,6 +122,15 @@ public class MainClient extends AbstractClient
     {
       BoardData dat = (BoardData) arg0;
       game.loadGame(dat);
+    }
+    else if (arg0 instanceof StatusData)
+    {
+      
+    }
+    else if (arg0 instanceof LeaderboardData)
+    {
+      LeaderboardData dat = (LeaderboardData)arg0;
+      //dat.
     }
   }  
 }
