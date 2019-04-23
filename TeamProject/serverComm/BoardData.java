@@ -3,8 +3,8 @@ import java.io.Serializable;
 
 public class BoardData implements Serializable
 {
-  private String boardFEN;
-  private byte[] gameBytes;
+  public String boardFEN;
+  public byte[] gameBytes;
   
   public BoardData(String fen, byte[] game)
   {

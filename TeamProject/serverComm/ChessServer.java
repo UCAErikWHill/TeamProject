@@ -20,7 +20,7 @@ public class ChessServer extends AbstractServer{
     private boolean running = false;
     //private DatabaseFile database = new DatabaseFile();
     private Database database = new Database();
-
+    private boolean playerWaiting = false;
     // Constructor for initializing the server with default settings.
     public ChessServer()
     {
@@ -100,23 +100,7 @@ public class ChessServer extends AbstractServer{
           result = new Error("The username and password are incorrect.", "Login");
           log.append("Client " + arg1.getId() + " failed to log in\n");
         }
-        //        ArrayList<String> r = new ArrayList<String>();
-       // Object result;
-//        String test;
-//        String command = "select username from user where username="+ data.getUsername() +" and ase_decrypt(password, 'key') =" + data.getPassword();
-//        r = database.query(command);
-//        if (r != null)
-//        {
-//            result = "LoginSuccessful";
-//                log.append("Client " + arg1.getId() + " successfully logged in as " + data.getUsername() + "\n");
-//        }
-//        else
-//        {
-//          result = new Error("The username and password are incorrect.", "Login");
-//            log.append("Client " + arg1.getId() + " failed to log in\n");
-//        }
-        
-        // Send the result to the client.
+
         try
         {
           arg1.sendToClient(result);
@@ -152,45 +136,9 @@ public class ChessServer extends AbstractServer{
       {
         return;
       }
-//        String command = "select username from user where username=?";
-//        String insert = "insert into user values('" + data.getUsername()+ ",aes_encrypt('"+ data.getPassword() +"','key'))";
-//    ArrayList<String> r = new ArrayList<String>();
-//    try {
-//      r = database.query(command);
-//    } catch (SQLException e1) {
-//      // TODO Auto-generated catch block
-//      e1.printStackTrace();
-//    }
-//      if (r != null)
-//        {
-//          for (String row : r)
-//          {
-//            if(row.equals(data.getUsername())) {
-//              result = new Error("The username is already in use.", "CreateAccount");
-//                log.append("Client " + arg1.getId() + " failed to create a new account\n");
-//                try
-//                {
-//                  arg1.sendToClient(result);
-//                }
-//                catch (IOException e)
-//                {
-//                  return;
-//                }
-//            }
-//            try {
-//        database.executeDML(insert);
-//      } catch (SQLException e) {
-//        // TODO Auto-generated catch block
-//        e.printStackTrace();
-//      }
-//          result = "CreateAccountSuccessful";
-//            log.append("Client " + arg1.getId() + " created a new account called " + data.getUsername() + "\n");
-//        
-//      }
-        if (arg0 instanceof LeaderboardData) {
-          String comm = "select * from leaderboard";
-         // r = database.query(comm);
-          
+      }
+      else if (arg0 instanceof LeaderboardData) {
+          String comm = "select * from leaderboard";          
           try
           {
             arg1.sendToClient(result);
@@ -201,19 +149,20 @@ public class ChessServer extends AbstractServer{
           }
           
         }
-        if(arg0 instanceof BoardData) {
+      else if(arg0 instanceof BoardData) {
           try
           {
-            arg1.sendToClient(data);
+            BoardData d = (BoardData) arg0;
+            arg1.sendToClient(d);
           }
           catch (IOException e)
           {
             return;
           }
         }
-        if (arg0 instanceof StatusData) {
+      else if (arg0 instanceof StatusData) {
           String comm = "select * from ";
-        }
+        
         // Send the result to the client.
         try
         {
@@ -223,8 +172,29 @@ public class ChessServer extends AbstractServer{
         {
           return;
         }
-      } 
       }
+      
+      else if (arg0 instanceof String)
+      {
+        String msg = (String) arg0;
+        if(msg.equals("newgame"))
+        {
+          if(!playerWaiting)
+          {
+            playerWaiting = true;
+          }
+          else
+          {
+            playerWaiting = false;
+            this.sendToAllClients("gamestart");
+          }
+        }
+        else if(msg.equals("gamestart"))
+        {
+          
+        }
+      }
+    }
     
     // Method that handles listening exceptions by displaying exception information.
     public void listeningException(Throwable exception) 

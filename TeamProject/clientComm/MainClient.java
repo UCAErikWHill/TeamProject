@@ -1,6 +1,7 @@
 package clientComm;
 import clientComm.*;
 import ocsf.client.AbstractClient;
+import serverComm.BoardData;
 import serverComm.Error;
 
 public class MainClient extends AbstractClient
@@ -78,6 +79,20 @@ public class MainClient extends AbstractClient
       {
         newaccount.createAccountSuccess();
       } 
+      else if (message.equals("wait"))
+      {
+        game.setPlayer(0);
+      }
+      else if(message.equals("gamestart"))
+      {
+        if(game.getPlayer() == 0)
+          game.start();
+        else 
+        {  
+          game.setPlayer(1);
+          game.start();
+        }
+      }
     }
     
     // If we received an Error, figure out where to display it.
@@ -98,7 +113,10 @@ public class MainClient extends AbstractClient
         newaccount.displayError(error.getMessage());
       }
     }
+    else if (arg0 instanceof BoardData)
+    {
+      BoardData dat = (BoardData) arg0;
+      game.loadGame(dat);
+    }
   }  
-
-  
 }

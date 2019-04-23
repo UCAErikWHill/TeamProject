@@ -4,6 +4,7 @@ package clientComm;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 
@@ -31,6 +32,14 @@ public class Option implements ActionListener
       // The Cancel button takes the user back to the initial panel.
       if (command.equals("New Game"))
       {
+        try
+        {
+          client.sendToServer("newgame");
+        } catch (IOException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
         CardLayout cardLayout = (CardLayout)container.getLayout();
         cardLayout.show(container, "6");
       }

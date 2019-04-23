@@ -10,15 +10,16 @@ import chesspresso.move.Move;
 import chesspresso.position.FEN;
 import chesspresso.position.Position;
 
+import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 import javax.swing.JPanel;
-
-//import chesslib.game.Game;
 
 import clientComm.MainClient;
 import clientGUI.BoardGUI;
@@ -32,18 +33,72 @@ public class Game implements ActionListener
   private chesspresso.game.Game chessGame;
   private Position gamePos;
   private int currentPlay;
+  private int player;// player can be 0 for 
   // Constructor for the initial controller.
   public Game(JPanel container, MainClient client)
   {
     this.container = container;
     this.client = client;
+    chessGame = new chesspresso.game.Game();
+    currentPlay = chessGame.getCurrentPly();
+    gamePos = chessGame.getPosition();
   }
   @Override
   public void actionPerformed(ActionEvent e)
   {
     // TODO Auto-generated method stub
-
+    if(currentPlay % 2 == player)
+    {
+      
+    }
   }
+  public void start()
+  {
+    BoardGUI b = (BoardGUI)container;
+    b.redrawBoard(Position.createInitialPosition());
+  }
+  public void end()
+  {
+    CardLayout cardLayout = (CardLayout)container.getLayout();
+    cardLayout.show(container, "4");
+    if(gamePos.isMate())
+    {
+      ;
+    }
+  }
+  
+  public void setPlayer(int p)
+  {
+    player = p;
+  }
+  public int getPlayer()
+  {
+    return player;
+  }
+  
+  public Position getPos()
+  {
+    return gamePos;
+  }
+  public BoardData getGameBoardData()
+  {
+    ByteArrayOutputStream byteout = new ByteArrayOutputStream();
+    DataOutputStream out = new DataOutputStream(byteout);
+    ByteArrayInputStream bytein;
+    try
+    {
+      chessGame.getModel().save(out, GameHeaderModel.MODE_STANDARD_TAGS, GameMoveModel.MODE_EVERYTHING);
+    } catch (IOException e1)
+    {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+    byte[] savedbytes = byteout.toByteArray();
+    String fn = chessGame.getPosition().getFEN();
+    BoardData save = new BoardData(fn,savedbytes);
+    return save;
+  }
+  
   public void loadGame(BoardData data)
   {
     ByteArrayInputStream bytein = new ByteArrayInputStream(data.getGameBytes());
@@ -54,18 +109,23 @@ public class Game implements ActionListener
       loadedgamemodel.load(in, GameHeaderModel.MODE_STANDARD_TAGS, GameMoveModel.MODE_EVERYTHING);
     } catch (IOException e)
     {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     chesspresso.game.Game loadedgame = new chesspresso.game.Game(loadedgamemodel);
     FEN.initFromFEN(loadedgame.getPosition(), data.getBoardFEN(), true);    
     chessGame = loadedgame;
     BoardGUI b = (BoardGUI)container;
-    b.redrawBoard(chessGame.getPosition());
+    
+    currentPlay = chessGame.getCurrentPly();
+    gamePos = chessGame.getPosition();
+    if(chessGame.getPosition().isMate() || chessGame.getPosition().isStaleMate())
+      this.end();
+    else
+      b.redrawBoard(chessGame.getPosition());
   }
+  
   public void addMove(int fromSquareIndex, int toSquareIndex) throws IllegalMoveException 
   {
-    
     for (short move : chessGame.getPosition().getAllMoves())
     {
       if(Move.getFromSqi(move) == fromSquareIndex && Move.getToSqi(move) == toSquareIndex)
@@ -97,6 +157,18 @@ public class Game implements ActionListener
         }
       }
     }
+    currentPlay = chessGame.getCurrentPly();
+    gamePos = chessGame.getPosition();
+    BoardData dat = this.getGameBoardData();
+    try
+    {
+      client.sendToServer(dat);
+    } catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    if(chessGame.getPosition().isMate() || chessGame.getPosition().isStaleMate())
+      this.end();
   }
-  
 }
