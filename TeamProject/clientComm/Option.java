@@ -34,7 +34,8 @@ public class Option implements ActionListener
       {
         try
         {
-          client.sendToServer("newgame");
+          Object result = "newgame";
+          client.sendToServer(result);
         } catch (IOException e)
         {
           // TODO Auto-generated catch block

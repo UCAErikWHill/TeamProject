@@ -5,6 +5,10 @@ import java.io.Serializable;
 
 public class LoginData implements Serializable 
 {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 7422465440365601946L;
   // Private data fields for the username and password.
   private String username;
   private String password;

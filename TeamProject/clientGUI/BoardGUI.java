@@ -19,6 +19,7 @@ public class BoardGUI extends JPanel
     {
       boardbuttons[i] = new JButton();
       boardbuttons[i].setActionCommand(Chess.sqiToStr(i));
+      boardbuttons[i].addActionListener(game);
     }
     
     for(int i = 63; i >= 0; i--)
@@ -26,7 +27,8 @@ public class BoardGUI extends JPanel
       screen.add(boardbuttons[i]);
     }
     this.add(screen);
-    
+    redrawBoard(Position.createInitialPosition());
+    this.setVisible(false);
   }
   public void redrawBoard(Position p)
   {

@@ -72,6 +72,7 @@ public class Game implements ActionListener
   {
     BoardGUI b = (BoardGUI)container.getComponent(6);
     b.redrawBoard(Position.createInitialPosition());
+    b.setVisible(true);
     
   }
   public void end()
@@ -82,7 +83,8 @@ public class Game implements ActionListener
     {
       try
       {
-        client.sendToServer((client.getLoggedUsername()));
+        Object result = client.getLoggedUsername();
+        client.sendToServer(client.getLoggedUsername());
         JOptionPane.showMessageDialog(null, "You Won. Score Increased by 1");
       } catch (IOException e)
       {
@@ -155,6 +157,7 @@ public class Game implements ActionListener
   
   public void addMove(int fromSquareIndex, int toSquareIndex) throws IllegalMoveException 
   {
+    Object result;
     for (short move : chessGame.getPosition().getAllMoves())
     {
       if(Move.getFromSqi(move) == fromSquareIndex && Move.getToSqi(move) == toSquareIndex)
@@ -169,6 +172,7 @@ public class Game implements ActionListener
               currentPlay = chessGame.getCurrentPly();
               gamePos = chessGame.getPosition();
               BoardData dat = this.getGameBoardData();
+              result = dat;
               try
               {
                 client.sendToServer(dat);
@@ -192,8 +196,10 @@ public class Game implements ActionListener
             currentPlay = chessGame.getCurrentPly();
             gamePos = chessGame.getPosition();
             BoardData dat = this.getGameBoardData();
+            result = dat;
             try
             {
+              
               client.sendToServer(dat);
             } catch (IOException e)
             {

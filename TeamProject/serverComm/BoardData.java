@@ -3,13 +3,17 @@ import java.io.Serializable;
 
 public class BoardData implements Serializable
 {
-  public String boardFEN;
-  public byte[] gameBytes;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -6277146973157084459L;
+  private String boardFEN;
+  private byte[] gameBytes;
   
   public BoardData(String fen, byte[] game)
   {
-    boardFEN = fen;
-    gameBytes = game;
+    setGameBytes(game);
+    setBoardFEN(fen);
   }
   
   public byte[] getGameBytes()

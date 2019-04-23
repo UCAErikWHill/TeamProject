@@ -36,7 +36,8 @@ public class Login implements ActionListener
         LoginData data = new LoginData(logingui.getUsername(), logingui.getPassword());
         try
         {
-          client.sendToServer(data);
+          Object result = data;
+          client.sendToServer(result);
         } catch (IOException e)
         {
           // TODO Auto-generated catch block

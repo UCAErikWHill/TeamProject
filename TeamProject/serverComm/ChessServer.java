@@ -20,6 +20,7 @@ public class ChessServer extends AbstractServer{
     //private DatabaseFile database = new DatabaseFile();
     private Database database;
     private boolean playerWaiting = false;
+    private ConnectionToClient clientWaiting;
     // Constructor for initializing the server with default settings.
     public ChessServer()
     {
@@ -139,7 +140,8 @@ public class ChessServer extends AbstractServer{
           try
           {
             BoardData d = (BoardData) arg0;
-            arg1.sendToClient(d);
+            result = d;
+            arg1.sendToClient(result);
           }
           catch (IOException e)
           {
@@ -165,15 +167,37 @@ public class ChessServer extends AbstractServer{
         String msg = (String) arg0;
         if(msg.equals("newgame"))
         {
+          System.out.println("client pressed newgame");
           if(!playerWaiting)
           {
             playerWaiting = true;
+            clientWaiting = arg1;
+            System.out.println("waiting on another client to join. playerwaiting: " + playerWaiting );
+            try
+            {
+              result = "wait";
+              arg1.sendToClient(result);
+            } catch (IOException e)
+            {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
           }
           else
           {
             playerWaiting = false;
-            this.sendToAllClients("gamestart");
-            System.out.println("New game starting");
+            //this.sendToAllClients("gamestart");
+            try
+            {
+              result = "gamestart";
+              arg1.sendToClient(result);
+              clientWaiting.sendToClient(result);
+              System.out.println("New game starting");
+            } catch (IOException e)
+            {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
           }
         }
         else
