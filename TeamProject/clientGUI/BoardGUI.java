@@ -57,5 +57,6 @@ public class BoardGUI extends JPanel
       if(p.getStone(i) == Chess.BLACK_KING)
         boardbuttons[i].setText("BK");
     }
+    repaint();
   }
 }

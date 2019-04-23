@@ -39,6 +39,8 @@ public class NewAccGUI extends JPanel
     passwordField2 = new JPasswordField(10);
     loginPanel.add(usernameLabel);
     loginPanel.add(usernameField);
+    loginPanel.add(passwordLabel);
+    loginPanel.add(passwordField);
     loginPanel.add(passwordLabel2);
     loginPanel.add(passwordField2);
     

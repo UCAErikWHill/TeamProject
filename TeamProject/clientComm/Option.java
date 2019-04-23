@@ -63,7 +63,7 @@ public class Option implements ActionListener
       this.admin = b;
       if(b==true)
       {
-        OptionGUI gui = (OptionGUI)container;
+        OptionGUI gui = (OptionGUI)container.getComponent(3);
         gui.setStatusVisible();
       }
     }

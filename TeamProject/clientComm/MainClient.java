@@ -91,11 +91,15 @@ public class MainClient extends AbstractClient
       else if(message.equals("gamestart"))
       {
         if(game.getPlayer() == 0)
+        {
           game.start();
+          System.out.println("game started as player white");
+        }
         else 
         {  
           game.setPlayer(1);
           game.start();
+          System.out.println("game started as player black");
         }
       }
     }

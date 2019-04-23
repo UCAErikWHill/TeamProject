@@ -1,5 +1,6 @@
 package clientGUI;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -17,6 +18,11 @@ public class OptionGUI extends JPanel
     leaderButton.addActionListener(opt);
     statusButton.addActionListener(opt);
     statusButton.setVisible(false);
+    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    add(newgameButton);
+    add(leaderButton);
+    add(statusButton);
+    
   }
   public void setStatusVisible()
   {

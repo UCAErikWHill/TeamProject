@@ -17,12 +17,13 @@ public class Database
         FileInputStream fis = null;
  
         try {
-            fis = new FileInputStream("db.properties");
+            fis = new FileInputStream("database/db.properties");
             prop.load(fis);
             String url = prop.getProperty("url");
             String user = prop.getProperty("username");
             String pass = prop.getProperty("password");
-            conn = DriverManager.getConnection(url, user, pass);
+            System.out.println(user);
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/student_space", "student", "hello");
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -58,7 +59,7 @@ public class Database
     public boolean writeUserToDatabase(String username, String password) 
     {
  
-        String query = "INSERT INTO user VALUES ('" + username.toString() + "',aes_encrypt('" + password.toString() + "','key'), 0);";
+        String query = "INSERT INTO users VALUES ('" + username.toString() + "',aes_encrypt('" + password.toString() + "','key'), 0);";
  
         try 
         {
@@ -83,7 +84,7 @@ public class Database
  
         String dbUsername;
         boolean user = false;
-        String query = "SELECT username FROM user;";
+        String query = "SELECT username FROM users;";
  
         try 
         {
@@ -113,7 +114,7 @@ public class Database
         String dbUsername, dbPassword;
         //String decrypt = "aes_decrypt('" + password.toString() + "','key')";
         boolean user = false;
-        String query = "SELECT username, aes_decrypt(password,'key') FROM user;";
+        String query = "SELECT username, aes_decrypt(password,'key') FROM users;";
  
         try {
             stmt = conn.createStatement();
@@ -140,7 +141,7 @@ public class Database
  
         String dbUsername;
         int dbScore;
-        String query = "SELECT username, score FROM user;";
+        String query = "SELECT username, score FROM users;";
  
         try {
             stmt = conn.createStatement();
@@ -169,7 +170,7 @@ public class Database
     public void updateScores(String username, int score) 
     {
  
-        String query = "UPDATE user SET score = " + (score += 1) + " WHERE username = '" + username + "';";
+        String query = "UPDATE users SET score = " + (score += 1) + " WHERE username = '" + username + "';";
  
         try 
         {

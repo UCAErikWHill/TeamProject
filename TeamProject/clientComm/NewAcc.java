@@ -4,6 +4,7 @@ package clientComm;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 
@@ -28,10 +29,18 @@ public class NewAcc implements ActionListener
       String command = ae.getActionCommand();
 
       // The Cancel button takes the user back to the initial panel.
-      if (command.equals("New Account"))
+      if (command.equals("Create"))
       {
-        NewAccGUI newaccgui = (NewAccGUI)container;
+        NewAccGUI newaccgui = (NewAccGUI)container.getComponent(2);
         CreateAccountData data = new CreateAccountData(newaccgui.getUsername(), newaccgui.getPassword(), newaccgui.getPassword2());
+        try
+        {
+          client.sendToServer(data);
+        } catch (IOException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
       }
       else if(command.equals("Back"))
       {
@@ -41,12 +50,12 @@ public class NewAcc implements ActionListener
     }
     public void displayError(String message)
     {
-      NewAccGUI test = (NewAccGUI)container;
-      test.setError(message);
+      NewAccGUI newaccgui = (NewAccGUI)container.getComponent(2);
+      newaccgui.setError(message);
     }
     public void createAccountSuccess()
     {
-      NewAccGUI newaccountgui = (NewAccGUI)container.getComponent(1);
+      NewAccGUI newaccountgui = (NewAccGUI)container.getComponent(2);
       CardLayout cardLayout = (CardLayout)container.getLayout();
       cardLayout.show(container, "1");
     }

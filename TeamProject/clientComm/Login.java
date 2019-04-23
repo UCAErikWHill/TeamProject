@@ -32,7 +32,7 @@ public class Login implements ActionListener
       // The Cancel button takes the user back to the initial panel.
       if (command.equals("Submit"))      
       {
-        LoginGUI logingui = (LoginGUI)container;
+        LoginGUI logingui = (LoginGUI)container.getComponent(0);
         LoginData data = new LoginData(logingui.getUsername(), logingui.getPassword());
         try
         {
@@ -54,7 +54,7 @@ public class Login implements ActionListener
     // After the login is successful, set the User object and display the contacts screen.
     public void loginSuccess()
     {
-      LoginGUI logingui = (LoginGUI)container;
+      LoginGUI logingui = (LoginGUI)container.getComponent(0);
       username = logingui.getUsername();
       CardLayout cardLayout = (CardLayout)container.getLayout();
       cardLayout.show(container, "4");
@@ -63,7 +63,7 @@ public class Login implements ActionListener
     // Method that displays a message in the error label.
     public void displayError(String error)
     {
-      LoginGUI logingui = (LoginGUI)container.getComponent(1);
+      LoginGUI logingui = (LoginGUI)container.getComponent(0);
       logingui.setError(error);
     }
     public String getLoggedUsername()

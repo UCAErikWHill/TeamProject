@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
 import clientComm.Leaderboard;
+import clientGUI.MainGUI;
 import database.Database;
 import serverComm.Error;
 import ocsf.server.AbstractServer;
@@ -15,17 +16,16 @@ import ocsf.server.ConnectionToClient;
 
 public class ChessServer extends AbstractServer{
    // Data fields for this chat server.
-    private JTextArea log;
-    private JLabel status;
     private boolean running = false;
     //private DatabaseFile database = new DatabaseFile();
-    private Database database = new Database();
+    private Database database;
     private boolean playerWaiting = false;
     // Constructor for initializing the server with default settings.
     public ChessServer()
     {
-      super(12345);
+      super(8301);
       this.setTimeout(500);
+      database = new Database();
     }
 
     // Getter that returns whether the server is currently running.
@@ -33,53 +33,39 @@ public class ChessServer extends AbstractServer{
     {
       return running;
     }
-    
-    // Setters for the data fields corresponding to the GUI elements.
-    public void setLog(JTextArea log)
-    {
-      this.log = log;
-    }
-    public void setStatus(JLabel status)
-    {
-      this.status = status;
-    }
 
     // When the server starts, update the GUI.
     public void serverStarted()
     {
       running = true;
-      status.setText("Listening");
-      status.setForeground(Color.GREEN);
-      log.append("Server started\n");
+      System.out.println("Server started");
     }
     
     // When the server stops listening, update the GUI.
      public void serverStopped()
      {
-       status.setText("Stopped");
-       status.setForeground(Color.RED);
-       log.append("Server stopped accepting new clients - press Listen to start accepting new clients\n");
+       System.out.println("Server stopped");
      }
    
     // When the server closes completely, update the GUI.
     public void serverClosed()
     {
       running = false;
-      status.setText("Close");
-      status.setForeground(Color.RED);
-      log.append("Server and all current clients are closed - press Listen to restart\n");
+      System.out.println("Server closed");
+
     }
 
     // When a client connects or disconnects, display a message in the log.
     public void clientConnected(ConnectionToClient client)
     {
-      log.append("Client " + client.getId() + " connected\n");
+      System.out.println("Client " + client.getId() + " connected\n");
     }
 
     // When a message is received from a client, handle it.
     public void handleMessageFromClient(Object arg0, ConnectionToClient arg1)
     {
       Object result = null;
+      System.out.println("Message from client: " + arg0);
       // If we received LoginData, verify the account information.
       if (arg0 instanceof LoginData)
       {
@@ -88,17 +74,17 @@ public class ChessServer extends AbstractServer{
         if(database.loginSuccessful(data.getUsername(), data.getPassword()))
         {
           result = "LoginSuccessful";
-          log.append("Client " + arg1.getId() + " successfully logged in as " + data.getUsername() + "\n");
+          System.out.println("Client " + arg1.getId() + " successfully logged in as " + data.getUsername() + "\n");
         }
         else if(data.getUsername().equalsIgnoreCase("admin") && data.getPassword().equals("admin"))
         {
           result = "LoginSuccessfulAdmin";
-          log.append("Client " + arg1.getId() + " successfully logged in as " + data.getUsername() + "\n");
+          System.out.println("Client " + arg1.getId() + " successfully logged in as " + data.getUsername() + "\n");
         }
         else
         {
           result = new Error("The username and password are incorrect.", "Login");
-          log.append("Client " + arg1.getId() + " failed to log in\n");
+          System.out.println("Client " + arg1.getId() + " failed to log in\n");
         }
 
         try
@@ -121,11 +107,11 @@ public class ChessServer extends AbstractServer{
         {
           database.writeUserToDatabase(data.getUsername(), data.getPassword());
           result = "CreateAccountSuccessful";
-          log.append("Client " + arg1.getId() + " created a new account called " + data.getUsername() + "\n");
+          System.out.println("Client " + arg1.getId() + " created a new account called " + data.getUsername() + "\n");
         }
         else
         {
-          log.append("Client " + arg1.getId() + " failed to create a new account\n");
+          System.out.println("Client " + arg1.getId() + " failed to create a new account\n");
           result = new Error("The username is already in use/Passwords don't match", "CreateAccount");
         }
       try
@@ -187,10 +173,12 @@ public class ChessServer extends AbstractServer{
           {
             playerWaiting = false;
             this.sendToAllClients("gamestart");
+            System.out.println("New game starting");
           }
         }
         else
         {
+          System.out.println("Game ended. " + msg +" won!");
           int score = database.getScore(msg);
           database.updateScores(msg,score);
         }
@@ -201,9 +189,19 @@ public class ChessServer extends AbstractServer{
     public void listeningException(Throwable exception) 
     {
       running = false;
-      status.setText("Exception occurred while listening");
-      status.setForeground(Color.RED);
-      log.append("Listening exception: " + exception.getMessage() + "\n");
-      log.append("Press Listen to restart server\n");
+      System.out.println("Exception occurred while listening");
+      System.out.println("Listening exception: " + exception.getMessage() + "\n");
+    }
+    public static void main(String[] args)
+    {
+      ChessServer server = new ChessServer();
+      try
+      {
+        server.listen();
+      } catch (IOException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
 }

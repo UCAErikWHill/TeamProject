@@ -70,8 +70,9 @@ public class Game implements ActionListener
   }
   public void start()
   {
-    BoardGUI b = (BoardGUI)container;
+    BoardGUI b = (BoardGUI)container.getComponent(6);
     b.redrawBoard(Position.createInitialPosition());
+    
   }
   public void end()
   {
@@ -142,7 +143,7 @@ public class Game implements ActionListener
     chesspresso.game.Game loadedgame = new chesspresso.game.Game(loadedgamemodel);
     FEN.initFromFEN(loadedgame.getPosition(), data.getBoardFEN(), true);    
     chessGame = loadedgame;
-    BoardGUI b = (BoardGUI)container;
+    BoardGUI b = (BoardGUI)container.getComponent(6);
     
     currentPlay = chessGame.getCurrentPly();
     gamePos = chessGame.getPosition();
