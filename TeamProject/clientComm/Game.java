@@ -1,19 +1,28 @@
 package clientComm;
 
 import chesspresso.Chess;
+import chesspresso.game.GameHeaderModel;
+import chesspresso.game.GameModel;
+import chesspresso.game.GameMoveModel;
 import chesspresso.game.view.GameBrowser;
 import chesspresso.move.IllegalMoveException;
 import chesspresso.move.Move;
+import chesspresso.position.FEN;
 import chesspresso.position.Position;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 
 //import chesslib.game.Game;
 
 import clientComm.MainClient;
+import clientGUI.BoardGUI;
+import serverComm.BoardData;
 
 public class Game implements ActionListener
 {
@@ -22,17 +31,12 @@ public class Game implements ActionListener
   private MainClient client;
   private chesspresso.game.Game chessGame;
   private Position gamePos;
+  private int currentPlay;
   // Constructor for the initial controller.
   public Game(JPanel container, MainClient client)
   {
     this.container = container;
     this.client = client;
-    gamePos = Position.createInitialPosition();
-    //Move play = new Move(move, move, move, move, false, false, false);
-    chessGame = new chesspresso.game.Game();
-    chessGame.getPosition().createInitialPosition();
-    short move = chessGame.getPosition().getPieceMove(Chess.KING, Chess.sqiToCol(Chess.A1), Chess.sqiToRow(Chess.A1), Chess.A2);
-    chessGame.notifyMoveDone(chessGame.getPosition(), move);
   }
   @Override
   public void actionPerformed(ActionEvent e)
@@ -40,23 +44,59 @@ public class Game implements ActionListener
     // TODO Auto-generated method stub
 
   }
-  private void addMove(int fromSquareIndex, int toSquareIndex, String comment) throws IllegalMoveException 
+  public void loadGame(BoardData data)
   {
-    Position position = chessGame.getPosition();
-    short [] legalMoves = position.getAllMoves();
-    for (int moveIndex = 0; moveIndex < legalMoves.length; moveIndex++){
-      short testedMove = legalMoves[moveIndex];
-      if (Move.getFromSqi(testedMove) == fromSquareIndex
-          && Move.getToSqi(testedMove) == toSquareIndex){
-        try {
-          position.doMove(testedMove);
-          chessGame.addComment(comment);
-        } catch (IllegalMoveException e) {
-          e.printStackTrace();
+    ByteArrayInputStream bytein = new ByteArrayInputStream(data.getGameBytes());
+    DataInputStream in = new DataInputStream(bytein);
+    GameModel loadedgamemodel = new GameModel();
+    try
+    {
+      loadedgamemodel.load(in, GameHeaderModel.MODE_STANDARD_TAGS, GameMoveModel.MODE_EVERYTHING);
+    } catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    chesspresso.game.Game loadedgame = new chesspresso.game.Game(loadedgamemodel);
+    FEN.initFromFEN(loadedgame.getPosition(), data.getBoardFEN(), true);    
+    chessGame = loadedgame;
+    BoardGUI b = (BoardGUI)container;
+    b.redrawBoard(chessGame.getPosition());
+  }
+  public void addMove(int fromSquareIndex, int toSquareIndex) throws IllegalMoveException 
+  {
+    
+    for (short move : chessGame.getPosition().getAllMoves())
+    {
+      if(Move.getFromSqi(move) == fromSquareIndex && Move.getToSqi(move) == toSquareIndex)
+      {
+        if(Move.isPromotion(move))
+        {
+          if(Move.getPromotionPiece(move) == Chess.QUEEN)
+          {
+            try
+            {
+              chessGame.getPosition().doMove(move);
+            } catch (IllegalMoveException e)
+            {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
+          }
         }
-        return;
+        else 
+        {
+          try
+          {
+            chessGame.getPosition().doMove(move);
+          } catch (IllegalMoveException e)
+          {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        }
       }
     }
-    throw new IllegalMoveException("");
   }
+  
 }
